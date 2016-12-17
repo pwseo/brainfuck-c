@@ -6,21 +6,21 @@
 #endif
 
 struct stack {
-    size_t *items;
+    void **items;
     size_t size, capacity;
 };
 
 
-size_t stack_pop(struct stack * const s) {
+void *stack_pop(struct stack * const s) {
     return s->items[--s->size];
 }
 
-size_t stack_peek(struct stack const * const s) {
+void *stack_peek(struct stack const * const s) {
     return s->items[s->size - 1];
 }
 
-void stack_push(struct stack * const s, size_t n) {
-    s->items[s->size++] = n;
+void stack_push(struct stack * const s, void *ptr) {
+    s->items[s->size++] = ptr;
 }
 
 bool stack_empty(struct stack const * const s) {

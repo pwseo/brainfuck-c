@@ -12,9 +12,9 @@ struct stack *stack_new(void);
 void stack_free(struct stack *s);
 
 // Getters and setters
-size_t stack_pop(struct stack * const s);
-size_t stack_peek(struct stack const * const s);
-void stack_push(struct stack * const s, size_t n);
+void *stack_pop(struct stack * const s);
+void *stack_peek(struct stack const * const s);
+void stack_push(struct stack * const s, void *ptr);
 bool stack_empty(struct stack const * const s);
 
 #endif
