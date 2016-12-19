@@ -52,7 +52,16 @@ void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
 
         switch (*vm->ip) {
             case TOK_LEFTB:
-                stack_push(vm->loops, vm->ip);
+                if (*value != 0) {
+                    stack_push(vm->loops, vm->ip);
+                } else {
+                    int i = 1;
+                    while (i > 0) {
+                        ++vm->ip;
+                        if (*vm->ip == TOK_LEFTB)  i += 1;
+                        if (*vm->ip == TOK_RIGHTB) i -= 1;
+                    }
+                }
                 break;
 
             case TOK_RIGHTB:
