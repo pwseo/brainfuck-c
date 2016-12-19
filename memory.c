@@ -1,39 +1,40 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include <stdio.h>
+
 #ifndef MEMORYSIZE
 #define MEMORYSIZE (16 * 1024) /* Default 16K memory */
 #endif
 
 struct memory {
-    struct cell *cells, *mp, *nextfree;
-    size_t used, avail;
+    struct cell *cells;
+    size_t used, avail, mp;
 };
 
 struct cell {
     uint8_t value;
-    struct cell *prev, *next;
+    size_t prev, next;
 };
 
 uint8_t *mem_value_ptr(struct memory const * const m)
 {
-    return &m->mp->value;
+    return &m->cells[m->mp].value;
 }
 
 void cell_init(struct cell * const c)
 {
     c->value = 0;
-    c->prev = c->next = NULL;
+    c->prev = SIZE_MAX;
+    c->next = SIZE_MAX;
 }
 
 void mem_resize(struct memory * const m)
 {
-    size_t oldcap = m->avail;
-
-    m->avail = oldcap + MEMORYSIZE;
+    m->avail += MEMORYSIZE;
     m->cells = realloc(m->cells, sizeof(*m->cells) * m->avail);
 
-    for (size_t i = oldcap; i < m->avail; ++i)
+    for (size_t i = m->avail - MEMORYSIZE; i < m->avail; ++i)
         cell_init(&m->cells[i]);
 }
 
@@ -43,12 +44,13 @@ struct memory *mem_new(void)
     struct memory *m = malloc(sizeof(*m));
 
     m->cells = NULL;
-    m->used = m->avail = 0;
+    m->used  = 0;
+    m->avail = 0;
+
     mem_resize(m);
 
-    m->mp = m->cells;
+    m->mp = 0;
     m->used += 1;
-    m->nextfree = (m->mp + 1);
 
     return m;
 }
@@ -59,35 +61,36 @@ void mem_free(struct memory *m)
     free(m);
 }
 
-struct cell *mem_newcell(struct memory * const m)
+size_t mem_newcell(struct memory * const m)
 {
-
     if (m->used == m->avail)
         mem_resize(m);
 
-    m->used += 1;
-
-    return m->nextfree++;
+    return m->used++;
 }
 
 void mem_prev(struct memory * const m)
 {
-    if (m->mp->prev == NULL) {
-        struct cell *new = mem_newcell(m);
-        new->next = m->mp;
-        m->mp->prev = new;
-    }
+    size_t idx = m->cells[m->mp].prev;
 
-    m->mp = m->mp->prev;
+    if (idx == SIZE_MAX)
+        idx = mem_newcell(m);
+
+    m->cells[idx].next = m->mp;
+    m->cells[m->mp].prev = idx;
+
+    m->mp = idx;
 }
 
 void mem_next(struct memory * const m)
 {
-    if (m->mp->next == NULL) {
-        struct cell *new = mem_newcell(m);
-        new->prev = m->mp;
-        m->mp->next = new;
-    }
+    size_t idx = m->cells[m->mp].next;
 
-    m->mp = m->mp->next;
+    if (idx == SIZE_MAX)
+        idx = mem_newcell(m);
+
+    m->cells[idx].prev = m->mp;
+    m->cells[m->mp].next = idx;
+
+    m->mp = idx;
 }
