@@ -3,7 +3,8 @@
 
 #include "tokenizer_bf.h"
 
-int main(void) {
+int main(void)
+{
     struct vm *vm = vm_new();
 
     vm_load(vm, stdin, tokenizer_bf);
