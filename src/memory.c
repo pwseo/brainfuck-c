@@ -1,14 +1,15 @@
 #include <stdlib.h>
+#include <string.h>
 #include <stdint.h>
 
 #include <stdio.h>
 
 #ifndef MEMORYSIZE
-#define MEMORYSIZE (16 * 1024) /* Default 16K memory */
+#define MEMORYSIZE (32 * 1024) /* Default 32K memory */
 #endif
 
 struct memory {
-    struct cell *cells;
+    uint8_t *cells;
     size_t used, avail, mp;
 };
 
@@ -19,14 +20,7 @@ struct cell {
 
 uint8_t *mem_value_ptr(struct memory const * const m)
 {
-    return &m->cells[m->mp].value;
-}
-
-void cell_init(struct cell * const c)
-{
-    c->value = 0;
-    c->prev = SIZE_MAX;
-    c->next = SIZE_MAX;
+    return &m->cells[m->mp];
 }
 
 void mem_resize(struct memory * const m)
@@ -34,8 +28,7 @@ void mem_resize(struct memory * const m)
     m->avail += MEMORYSIZE;
     m->cells = realloc(m->cells, sizeof(*m->cells) * m->avail);
 
-    for (size_t i = m->avail - MEMORYSIZE; i < m->avail; ++i)
-        cell_init(&m->cells[i]);
+    memset(&m->cells[m->avail - MEMORYSIZE], 0, MEMORYSIZE);
 }
 
 
@@ -71,26 +64,18 @@ size_t mem_newcell(struct memory * const m)
 
 void mem_prev(struct memory * const m)
 {
-    size_t idx = m->cells[m->mp].prev;
-
-    if (idx == SIZE_MAX)
-        idx = mem_newcell(m);
-
-    m->cells[idx].next = m->mp;
-    m->cells[m->mp].prev = idx;
-
-    m->mp = idx;
+    if (m->mp > 0) {
+        m->mp -= 1;
+    } else {
+        fprintf(stderr, "Access violation: tried to access negative memory address.\n");
+        exit(2);
+    }
 }
 
 void mem_next(struct memory * const m)
 {
-    size_t idx = m->cells[m->mp].next;
+    if (m->mp == m->avail - 1)
+        mem_resize(m);
 
-    if (idx == SIZE_MAX)
-        idx = mem_newcell(m);
-
-    m->cells[idx].prev = m->mp;
-    m->cells[m->mp].next = idx;
-
-    m->mp = idx;
+    m->mp += 1;
 }
