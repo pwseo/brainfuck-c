@@ -20,6 +20,7 @@
 #include <stdlib.h>
 
 #include "vm.h"
+#include "optimizations.h"
 
 #include "tokenizer_bf.h"
 
@@ -40,6 +41,7 @@ int main(int argc, char **argv)
     struct vm *vm = vm_new();
 
     vm_load(vm, bfsrc, tokenizer_bf);
+    vm_optimize(vm, clearloops);
     vm_execute(vm, stdin, stdout);
     vm_free(vm);
 }

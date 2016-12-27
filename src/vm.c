@@ -120,6 +120,10 @@ void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
                 fputc(*value, out);
                 break;
 
+            case TOK_ZERO:
+                *value = 0;
+                break;
+
             default:
                 break;
         }
