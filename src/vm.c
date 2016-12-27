@@ -119,8 +119,14 @@ void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
             case TOK_PUT:
                 fputc(*value, out);
                 break;
+
             default:
                 break;
         }
     }
+}
+
+void vm_optimize(struct vm * const vm, void (*func)(struct instruction * const))
+{
+    func(vm->code);
 }

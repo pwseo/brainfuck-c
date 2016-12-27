@@ -25,6 +25,7 @@ struct vm;
 
 struct vm *vm_new(void);
 void vm_load(struct vm * const vm, FILE * const stream, struct instruction (*tokenizer)(FILE * const f));
+void vm_optimize(struct vm * const vm, void (*f)(struct instruction * const));
 void vm_execute(struct vm * const vm, FILE * const istream, FILE * const ostream);
 void vm_free(struct vm * vm);
 
