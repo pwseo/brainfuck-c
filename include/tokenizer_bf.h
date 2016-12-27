@@ -22,6 +22,6 @@
 #include <stdio.h>
 #include "token.h"
 
-enum token tokenizer_bf(FILE * const f);
+struct instruction tokenizer_bf(FILE * const f);
 
 #endif

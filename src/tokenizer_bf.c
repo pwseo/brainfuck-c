@@ -18,25 +18,34 @@
 
 #include "tokenizer_bf.h"
 
-enum token tokenizer_bf(FILE * const f)
+enum token to_token(char const c)
 {
-    int c;
-    
-again:
-    c = fgetc(f);
-
-    if (c == EOF)
-        return TOK_HALT;
-
     switch (c) {
-        case '[': return TOK_LEFTB;
-        case ']': return TOK_RIGHTB;
         case '+': return TOK_INC;
         case '-': return TOK_DEC;
-        case ',': return TOK_GET;
-        case '.': return TOK_PUT;
-        case '<': return TOK_LEFT;
         case '>': return TOK_RIGHT;
-        default:  goto again;
+        case '<': return TOK_LEFT;
+        case '.': return TOK_PUT;
+        case ',': return TOK_GET;
+        case '[': return TOK_LEFTB;
+        case ']': return TOK_RIGHTB;
+        default : return TOK_COMMENT;
     }
+}
+
+struct instruction tokenizer_bf(FILE * const f)
+{
+    int c;
+    struct instruction instr = { .type = TOK_HALT, .param = 1 };
+
+    do {
+        c = fgetc(f);
+        if (c == EOF)
+            return (struct instruction){ .type = TOK_HALT, };
+
+        instr.type = to_token(c);
+
+    } while (instr.type == TOK_COMMENT);
+
+    return instr;
 }

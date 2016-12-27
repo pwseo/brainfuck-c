@@ -27,7 +27,7 @@
 struct vm {
     struct stack  *loops;
     struct memory *mem;
-    enum token *code, *ip;
+    struct instruction *code, *ip;
 };
 
 struct vm *vm_new(void)
@@ -51,24 +51,24 @@ void vm_free(struct vm *vm)
 }
 
 void vm_load(struct vm * const vm, FILE * const f,
-             enum token (*tokenizer)(FILE * const))
+             struct instruction (*tokenizer)(FILE * const))
 {
     vm->code = malloc(sizeof(*vm->code) * (1024 * 1024));
-    enum token *iptr = vm->code;
+    struct instruction *iptr = vm->code;
 
-    for (enum token tok; (tok = tokenizer(f)) != TOK_HALT; ++iptr)
-        *iptr = tok;
+    for (struct instruction instr; (instr = tokenizer(f)).type != TOK_HALT; ++iptr)
+        *iptr = instr;
 
-    *iptr = TOK_HALT;
+    (*iptr).type = TOK_HALT;
 }
 
 void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
 {
     vm->ip = vm->code;
-    for (uint8_t *value; *vm->ip != TOK_HALT; ++vm->ip) {
+    for (uint8_t *value; (*vm->ip).type != TOK_HALT; ++vm->ip) {
         value = mem_value_ptr(vm->mem);
 
-        switch (*vm->ip) {
+        switch ((*vm->ip).type) {
             case TOK_LEFTB:
                 if (*value != 0) {
                     stack_push(vm->loops, vm->ip);
@@ -76,8 +76,8 @@ void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
                     int i = 1;
                     while (i > 0) {
                         ++vm->ip;
-                        if (*vm->ip == TOK_LEFTB)  i += 1;
-                        if (*vm->ip == TOK_RIGHTB) i -= 1;
+                        if ((*vm->ip).type == TOK_LEFTB)  i += 1;
+                        if ((*vm->ip).type == TOK_RIGHTB) i -= 1;
                     }
                 }
                 break;

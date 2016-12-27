@@ -26,6 +26,15 @@ enum token {
     TOK_GET, TOK_PUT,
 
     TOK_HALT,
+    TOK_ADD,
+    TOK_ZERO,
+
+    TOK_COMMENT,
+};
+
+struct instruction {
+    enum token type;
+    int param;
 };
 
 #endif
