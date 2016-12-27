@@ -54,18 +54,25 @@ void vm_load(struct vm * const vm, FILE * const f,
              struct instruction (*tokenizer)(FILE * const))
 {
     vm->code = malloc(sizeof(*vm->code) * (1024 * 1024));
-    struct instruction *iptr = vm->code;
+    struct instruction *iptr = vm->code,
+                       *prev = NULL;
 
-    for (struct instruction instr; (instr = tokenizer(f)).type != TOK_HALT; ++iptr)
+    for (struct instruction instr; (instr = tokenizer(f)).type != TOK_HALT; ++iptr) {
         *iptr = instr;
+        iptr->prev = prev;
+        if (prev != NULL)
+            prev->next = iptr;
+        prev = iptr;
+    }
 
-    (*iptr).type = TOK_HALT;
+    iptr->type = TOK_HALT;
+    prev->next = iptr;
 }
 
 void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
 {
     vm->ip = vm->code;
-    for (uint8_t *value; (*vm->ip).type != TOK_HALT; ++vm->ip) {
+    for (uint8_t *value; (*vm->ip).type != TOK_HALT; vm->ip = vm->ip->next) {
         value = mem_value_ptr(vm->mem);
 
         switch ((*vm->ip).type) {
@@ -75,7 +82,7 @@ void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
                 } else {
                     int i = 1;
                     while (i > 0) {
-                        ++vm->ip;
+                        vm->ip = vm->ip->next;
                         if ((*vm->ip).type == TOK_LEFTB)  i += 1;
                         if ((*vm->ip).type == TOK_RIGHTB) i -= 1;
                     }

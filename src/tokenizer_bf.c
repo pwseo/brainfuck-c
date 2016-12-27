@@ -36,7 +36,8 @@ enum token to_token(char const c)
 struct instruction tokenizer_bf(FILE * const f)
 {
     int c;
-    struct instruction instr = { .type = TOK_HALT, .param = 1 };
+    struct instruction instr = { .type = TOK_HALT, .param = 1,
+                                 .next = NULL, .prev = NULL };
 
     do {
         c = fgetc(f);

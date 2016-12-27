@@ -35,6 +35,7 @@ enum token {
 struct instruction {
     enum token type;
     int param;
+    struct instruction *prev, *next;
 };
 
 #endif
