@@ -42,6 +42,7 @@ int main(int argc, char **argv)
 
     vm_load(vm, bfsrc, tokenizer_bf);
     vm_optimize(vm, clearloops);
+    vm_optimize(vm, compress);
     vm_execute(vm, stdin, stdout);
     vm_free(vm);
 }

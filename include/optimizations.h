@@ -4,5 +4,6 @@
 #include "token.h"
 
 void clearloops(struct instruction * const instr);
+void compress(struct instruction * const instr);
 
 #endif

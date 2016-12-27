@@ -116,6 +116,14 @@ void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
                 *value = fgetc(in);
                 break;
 
+            case TOK_ADD:
+                *value += (*vm->ip).param;
+                break;
+
+            case TOK_SUB:
+                *value -= (*vm->ip).param;
+                break;
+
             case TOK_PUT:
                 fputc(*value, out);
                 break;

@@ -26,7 +26,7 @@ enum token {
     TOK_GET, TOK_PUT,
 
     TOK_HALT,
-    TOK_ADD,
+    TOK_ADD, TOK_SUB,
     TOK_ZERO,
 
     TOK_COMMENT,
