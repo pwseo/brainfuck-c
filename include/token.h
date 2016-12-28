@@ -27,6 +27,7 @@ enum token {
 
     TOK_HALT,
     TOK_ADD, TOK_SUB,
+    TOK_MLEFT, TOK_MRIGHT,
     TOK_ZERO,
 
     TOK_COMMENT,

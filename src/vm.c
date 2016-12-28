@@ -124,6 +124,14 @@ void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
                 *value -= (*vm->ip).param;
                 break;
 
+            case TOK_MLEFT:
+                mem_prev(vm->mem, (*vm->ip).param);
+                break;
+
+            case TOK_MRIGHT:
+                mem_next(vm->mem, (*vm->ip).param);
+                break;
+
             case TOK_PUT:
                 fputc(*value, out);
                 break;

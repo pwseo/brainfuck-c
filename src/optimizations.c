@@ -29,7 +29,12 @@ void compress(struct instruction * const code)
                 iptr->type = TOK_ADD;
             if (iptr->type == TOK_DEC)
                 iptr->type = TOK_SUB;
-            if (iptr->type == TOK_ADD || iptr->type == TOK_SUB) {
+            if (iptr->type == TOK_LEFT)
+                iptr->type = TOK_MLEFT;
+            if (iptr->type == TOK_RIGHT)
+                iptr->type = TOK_MRIGHT;
+
+            if (iptr->type == TOK_ADD || iptr->type == TOK_SUB || iptr->type == TOK_MLEFT || iptr->type == TOK_MRIGHT) {
                 iptr->next = cursor->next;
                 if (cursor->next)
                     cursor->next->prev = iptr;
