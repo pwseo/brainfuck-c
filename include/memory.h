@@ -26,8 +26,8 @@ struct memory;
 struct memory *mem_new(void);
 void mem_free(struct memory *mem);
 
-void mem_prev(struct memory * const mem);
-void mem_next(struct memory * const mem);
+void mem_prev(struct memory * const mem, const size_t n);
+void mem_next(struct memory * const mem, const size_t n);
 
 uint8_t *mem_value_ptr(struct memory const * const mem);
 

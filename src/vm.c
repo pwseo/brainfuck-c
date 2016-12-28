@@ -97,11 +97,11 @@ void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
                 break;
 
             case TOK_LEFT:
-                mem_prev(vm->mem);
+                mem_prev(vm->mem, 1);
                 break;
 
             case TOK_RIGHT:
-                mem_next(vm->mem);
+                mem_next(vm->mem, 1);
                 break;
 
             case TOK_INC:

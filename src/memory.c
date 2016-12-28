@@ -80,20 +80,20 @@ size_t mem_newcell(struct memory * const m)
     return m->used++;
 }
 
-void mem_prev(struct memory * const m)
+void mem_prev(struct memory * const m, const size_t n)
 {
-    if (m->mp > 0) {
-        m->mp -= 1;
+    if ((m->mp - (n-1)) > 0) {
+        m->mp -= n;
     } else {
         fprintf(stderr, "Access violation: tried to access negative memory address.\n");
         exit(2);
     }
 }
 
-void mem_next(struct memory * const m)
+void mem_next(struct memory * const m, const size_t n)
 {
-    if (m->mp == m->avail - 1)
+    if ((m->mp + (n-1)) == m->avail - 1)
         mem_resize(m);
 
-    m->mp += 1;
+    m->mp += n;
 }
