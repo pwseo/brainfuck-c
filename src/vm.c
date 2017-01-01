@@ -32,7 +32,7 @@ struct vm {
 
 struct vm *vm_new(void)
 {
-    struct vm *vm = calloc(1, sizeof(*vm));
+    struct vm *vm = calloc(1, sizeof *vm);
 
     vm->loops = stack_new();
     vm->mem = mem_new();

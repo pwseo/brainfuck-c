@@ -57,10 +57,10 @@ void stack_free(struct stack *s)
 
 struct stack *stack_new(void)
 {
-    struct stack *s = malloc(sizeof(*s));
+    struct stack *s = malloc(sizeof *s);
 
     s->capacity = STACKSIZE;
-    s->items = malloc(sizeof(*s->items) * s->capacity);
+    s->items = malloc(s->capacity * sizeof *s->items);
     s->size = 0;
 
     return s;

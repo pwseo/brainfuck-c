@@ -52,7 +52,7 @@ void mem_resize(struct memory * const m)
 
 struct memory *mem_new(void)
 {
-    struct memory *m = malloc(sizeof(*m));
+    struct memory *m = malloc(sizeof *m);
 
     m->cells = NULL;
     m->used  = 0;
