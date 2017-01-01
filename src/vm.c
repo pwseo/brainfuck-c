@@ -95,14 +95,6 @@ void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
                     vm->ip = stack_peek(vm->loops);
                 break;
 
-            case TOK_LEFT:
-                value = mem_prev(vm->mem, 1);
-                break;
-
-            case TOK_RIGHT:
-                value = mem_next(vm->mem, 1);
-                break;
-
             case TOK_INC:
                 *value += 1;
                 break;
@@ -123,10 +115,12 @@ void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
                 *value -= (*vm->ip).param;
                 break;
 
+            case TOK_LEFT:
             case TOK_MLEFT:
                 value = mem_prev(vm->mem, (*vm->ip).param);
                 break;
 
+            case TOK_RIGHT:
             case TOK_MRIGHT:
                 value = mem_next(vm->mem, (*vm->ip).param);
                 break;
