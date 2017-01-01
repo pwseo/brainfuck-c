@@ -12,15 +12,15 @@ SOURCES := $(wildcard $(SRCDIR)/*.c)
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SOURCES))
 
 debug: CFLAGS += -O0 -g
-debug: CFLAGS += -fsanitize=address -fno-omit-frame-pointer
-debug: CFLAGS += -fsanitize=undefined
+debug: CFLAGS += -fsanitize=address,undefined -fno-omit-frame-pointer
+debug: LDFLAGS := -fsanitize=address,undefined
 debug: $(TARGET)
 
 release: CFLAGS += -O2
 release: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	@$(CC) $(CFLAGS) -o $@ $^
+	@$(CC) $(LDFLAGS) -o $@ $^
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -I$(INCDIR) -c -o $@ $<
