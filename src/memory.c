@@ -20,8 +20,6 @@
 #include <string.h>
 #include <stdint.h>
 
-#include <stdio.h>
-
 #ifndef MEMORYSIZE
 #define MEMORYSIZE (32 * 1024) /* Default 32K memory */
 #endif
@@ -80,20 +78,18 @@ size_t mem_newcell(struct memory * const m)
     return m->used++;
 }
 
-void mem_prev(struct memory * const m, const size_t n)
+uint8_t *mem_prev(struct memory * const m, const size_t n)
 {
-    if ((m->mp - (n-1)) > 0) {
-        m->mp -= n;
-    } else {
-        fprintf(stderr, "Access violation: tried to access negative memory address.\n");
-        exit(2);
-    }
+    if ((m->mp - (n-1)) > 0)
+        return &m->cells[m->mp -= n];
+    else
+        return NULL;
 }
 
-void mem_next(struct memory * const m, const size_t n)
+uint8_t *mem_next(struct memory * const m, const size_t n)
 {
     if ((m->mp + (n-1)) == m->avail - 1)
         mem_resize(m);
 
-    m->mp += n;
+    return &m->cells[m->mp += n];
 }

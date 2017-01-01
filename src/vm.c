@@ -72,8 +72,7 @@ void vm_load(struct vm * const vm, FILE * const f,
 void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
 {
     vm->ip = vm->code;
-    for (uint8_t *value; (*vm->ip).type != TOK_HALT; vm->ip = vm->ip->next) {
-        value = mem_value_ptr(vm->mem);
+    for (uint8_t *value = mem_value_ptr(vm->mem); (*vm->ip).type != TOK_HALT; vm->ip = vm->ip->next) {
 
         switch ((*vm->ip).type) {
             case TOK_LEFTB:
@@ -97,11 +96,11 @@ void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
                 break;
 
             case TOK_LEFT:
-                mem_prev(vm->mem, 1);
+                value = mem_prev(vm->mem, 1);
                 break;
 
             case TOK_RIGHT:
-                mem_next(vm->mem, 1);
+                value = mem_next(vm->mem, 1);
                 break;
 
             case TOK_INC:
@@ -125,11 +124,11 @@ void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
                 break;
 
             case TOK_MLEFT:
-                mem_prev(vm->mem, (*vm->ip).param);
+                value = mem_prev(vm->mem, (*vm->ip).param);
                 break;
 
             case TOK_MRIGHT:
-                mem_next(vm->mem, (*vm->ip).param);
+                value = mem_next(vm->mem, (*vm->ip).param);
                 break;
 
             case TOK_PUT:
