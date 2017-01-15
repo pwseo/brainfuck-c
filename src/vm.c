@@ -69,21 +69,39 @@ void vm_load(struct vm * const vm, FILE * const f,
     prev->next = iptr;
 }
 
+static inline
+void stepi(struct vm * const vm)
+{
+    vm->ip = vm->ip->next;
+}
+
+static inline
+enum token itype(struct vm const * const vm)
+{
+    return vm->ip->type;
+}
+
+static inline
+int iparam(struct vm const * const vm)
+{
+    return vm->ip->param;
+}
+
 void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
 {
     vm->ip = vm->code;
-    for (uint8_t *value = mem_value_ptr(vm->mem); (*vm->ip).type != TOK_HALT; vm->ip = vm->ip->next) {
+    for (uint8_t *value = mem_value_ptr(vm->mem); itype(vm) != TOK_HALT; stepi(vm)) {
 
-        switch ((*vm->ip).type) {
+        switch (itype(vm)) {
             case TOK_LEFTB:
                 if (*value != 0) {
                     stack_push(vm->loops, vm->ip);
                 } else {
                     int i = 1;
                     while (i > 0) {
-                        vm->ip = vm->ip->next;
-                        if ((*vm->ip).type == TOK_LEFTB)  i += 1;
-                        if ((*vm->ip).type == TOK_RIGHTB) i -= 1;
+                        stepi(vm);
+                        if (itype(vm) == TOK_LEFTB)  i += 1;
+                        if (itype(vm) == TOK_RIGHTB) i -= 1;
                     }
                 }
                 break;
@@ -108,11 +126,11 @@ void vm_execute(struct vm * const vm, FILE * const in, FILE * const out)
                 break;
 
             case TOK_ADD:
-                *value += (*vm->ip).param;
+                *value += iparam(vm);
                 break;
 
             case TOK_SUB:
-                *value -= (*vm->ip).param;
+                *value -= iparam(vm);
                 break;
 
             case TOK_LEFT:
